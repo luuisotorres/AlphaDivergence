@@ -1,5 +1,8 @@
 import json
 from src.services.llm import LLMService
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class JudgeAgent:
     def __init__(self):
@@ -10,7 +13,7 @@ class JudgeAgent:
         """
         Uses LLM to compare hype vs reality and issue a verdict.
         """
-        print(f"[{self.name}] Assessing risk using AI...")
+        logger.info(f"[{self.name}] Assessing risk using AI...")
         
         # Construct Prompt
         prompt = f"""
@@ -43,7 +46,7 @@ class JudgeAgent:
             cleaned_text = response_text.replace("```json", "").replace("```", "").strip()
             verdict_data = json.loads(cleaned_text)
         except Exception as e:
-            print(f"[{self.name}] Error parsing LLM response: {e}")
+            logger.error(f"[{self.name}] Error parsing LLM response: {e}")
             # Fallback
             verdict_data = {
                 "risk_level": "Unknown",

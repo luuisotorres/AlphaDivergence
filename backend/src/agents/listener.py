@@ -5,8 +5,10 @@ import praw
 import requests
 from dotenv import load_dotenv
 from src.services.llm import LLMService
+from src.utils.logger import get_logger
 
 load_dotenv()
+logger = get_logger(__name__)
 
 class ListenerAgent:
     def __init__(self):
@@ -23,13 +25,13 @@ class ListenerAgent:
                     user_agent=os.getenv("REDDIT_USER_AGENT", "AlphaDivergence/1.0")
                 )
             except Exception as e:
-                print(f"[{self.name}] Failed to initialize Reddit: {e}")
+                logger.error(f"[{self.name}] Failed to initialize Reddit: {e}")
 
     def _fetch_reddit_rss(self, token_symbol: str):
         """
         Fetches Reddit posts via public RSS feeds (No API Key required).
         """
-        print(f"[{self.name}] Fetching Reddit via RSS (Fallback Mode)...")
+        logger.info(f"[{self.name}] Fetching Reddit via RSS (Fallback Mode)...")
         
         # We'll search a combined feed of relevant subreddits
         subreddits = "CryptoMoonShots+SatoshiStreetBets+Cryptocurrency+Solana+ethtrader+defi+altcoin+memecoin+basechain+bnb"
@@ -41,7 +43,7 @@ class ListenerAgent:
             response = requests.get(rss_url, headers=headers, timeout=10)
             
             if response.status_code != 200:
-                print(f"[{self.name}] RSS Fetch Failed: {response.status_code}")
+                logger.warning(f"[{self.name}] RSS Fetch Failed: {response.status_code}")
                 return None
 
             # Simple XML parsing (avoiding heavy xml libraries if possible, but xml.etree is stdlib)
@@ -71,7 +73,7 @@ class ListenerAgent:
             return posts
 
         except Exception as e:
-            print(f"[{self.name}] Error parsing RSS: {e}")
+            logger.error(f"[{self.name}] Error parsing RSS: {e}")
             return None
 
     def _fetch_reddit_sentiment(self, token_symbol: str):
@@ -81,7 +83,7 @@ class ListenerAgent:
         
         # Try API first
         if self.reddit:
-            print(f"[{self.name}] Searching Reddit (API) for ${token_symbol}...")
+            logger.info(f"[{self.name}] Searching Reddit (API) for ${token_symbol}...")
             subreddits = [
                 "CryptoMoonShots", "SatoshiStreetBets", "Cryptocurrency", "Solana",
                 "ethtrader", "defi", "altcoin", "memecoin", "basechain", "bnb"
@@ -96,7 +98,7 @@ class ListenerAgent:
                         "selftext": submission.selftext
                     })
             except Exception as e:
-                print(f"[{self.name}] Reddit API Error: {e}")
+                logger.error(f"[{self.name}] Reddit API Error: {e}")
         
         # Fallback to RSS if API failed or not configured
         if not posts_to_analyze:
@@ -105,7 +107,7 @@ class ListenerAgent:
                 posts_to_analyze = rss_posts
 
         if not posts_to_analyze:
-            print(f"[{self.name}] No Reddit posts found (API & RSS failed).")
+            logger.warning(f"[{self.name}] No Reddit posts found (API & RSS failed).")
             return {
                 "posts": 0,
                 "upvotes": 0,
@@ -145,7 +147,7 @@ class ListenerAgent:
         """
         Aggregates sentiment from social sources (Reddit) and calculates a hype score.
         """
-        print(f"[{self.name}] Starting analysis for {token_symbol}...")
+        logger.info(f"[{self.name}] Starting analysis for {token_symbol}...")
         
         reddit_data = self._fetch_reddit_sentiment(token_symbol)
 

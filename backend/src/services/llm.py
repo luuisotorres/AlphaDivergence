@@ -3,8 +3,10 @@ import json
 import google.generativeai as genai
 from openai import OpenAI
 from dotenv import load_dotenv
+from src.utils.logger import get_logger
 
 load_dotenv()
+logger = get_logger(__name__)
 
 class LLMService:
     def __init__(self):
@@ -20,14 +22,14 @@ class LLMService:
             self.provider = "openai"
             self.client = OpenAI(api_key=openai_key)
             self.model = "gpt-4o"
-            print("[LLMService] Using OpenAI (GPT-4o)")
+            logger.info("[LLMService] Using OpenAI (GPT-4o)")
         elif gemini_key:
             self.provider = "gemini"
             genai.configure(api_key=gemini_key)
             self.model = genai.GenerativeModel('gemini-2.0-flash')
-            print("[LLMService] Using Gemini (Flash)")
+            logger.info("[LLMService] Using Gemini (Flash)")
         else:
-            print("[LLMService] No valid API keys found (OpenAI or Gemini). LLM features disabled.")
+            logger.warning("[LLMService] No valid API keys found (OpenAI or Gemini). LLM features disabled.")
 
     def generate_text(self, prompt: str) -> str:
         """
@@ -53,7 +55,7 @@ class LLMService:
                 return response.text
                 
         except Exception as e:
-            print(f"[LLMService] Error generating text: {e}")
+            logger.error(f"[LLMService] Error generating text: {e}")
             return f"Error generating text: {e}"
 
     def analyze_sentiment(self, text: str) -> dict:
@@ -94,7 +96,7 @@ class LLMService:
             return json.loads(cleaned_text)
 
         except Exception as e:
-            print(f"[LLMService] Error analyzing sentiment: {e}")
+            logger.error(f"[LLMService] Error analyzing sentiment: {e}")
             return {
                 "sentiment_score": 0.5,
                 "sentiment_label": "Neutral",

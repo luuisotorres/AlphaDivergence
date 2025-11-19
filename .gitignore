@@ -2,6 +2,7 @@
 debug_*.py
 backend/main.py
 backend/README.md
+backend/logs/*.log
 
 # MacOS
 .DS_Store

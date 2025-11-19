@@ -2,8 +2,10 @@ import os
 import requests
 import time
 from dotenv import load_dotenv
+from src.utils.logger import get_logger
 
 load_dotenv()
+logger = get_logger(__name__)
 
 class AnalystAgent:
     def __init__(self):
@@ -12,7 +14,7 @@ class AnalystAgent:
 
     def _fetch_dexscreener_data(self, token_symbol: str):
         """Fetches real-time data from DexScreener."""
-        print(f"[{self.name}] Querying DexScreener for ${token_symbol}...")
+        logger.info(f"[{self.name}] Querying DexScreener for ${token_symbol}...")
         
         try:
             url = f"https://api.dexscreener.com/latest/dex/search?q={token_symbol}"
@@ -20,7 +22,7 @@ class AnalystAgent:
             data = response.json()
             
             if not data.get("pairs"):
-                print(f"[{self.name}] No pairs found for {token_symbol}.")
+                logger.warning(f"[{self.name}] No pairs found for {token_symbol}.")
                 return None
 
             # Prioritize Ethereum pairs for whale tracking
@@ -38,7 +40,7 @@ class AnalystAgent:
             # Use Ethereum pair if available, otherwise use highest liquidity
             pair = eth_pair if eth_pair else highest_liquidity_pair
             
-            print(f"[{self.name}] Selected pair: {pair.get('chainId')} (Liquidity: ${pair.get('liquidity', {}).get('usd', 0):,.0f})")
+            logger.info(f"[{self.name}] Selected pair: {pair.get('chainId')} (Liquidity: ${pair.get('liquidity', {}).get('usd', 0):,.0f})")
             
             return {
                 "chain_id": pair.get("chainId"),
@@ -53,7 +55,7 @@ class AnalystAgent:
             }
 
         except Exception as e:
-            print(f"[{self.name}] Error fetching DexScreener data: {e}")
+            logger.error(f"[{self.name}] Error fetching DexScreener data: {e}")
             return None
 
     def _fetch_etherscan_whales(self, token_address: str, pair_address: str, price_usd: float):
@@ -61,10 +63,10 @@ class AnalystAgent:
         Fetches recent transfers from Etherscan to detect Whale Buys/Sells.
         """
         if not self.etherscan_api_key:
-            print(f"[{self.name}] Etherscan API Key missing. Skipping Whale Tracking.")
+            logger.warning(f"[{self.name}] Etherscan API Key missing. Skipping Whale Tracking.")
             return None
 
-        print(f"[{self.name}] Fetching Etherscan data for Whale Tracking...")
+        logger.info(f"[{self.name}] Fetching Etherscan data for Whale Tracking...")
         
         try:
             # Use V2 API endpoint
@@ -84,7 +86,7 @@ class AnalystAgent:
             data = response.json()
             
             if data["status"] != "1":
-                print(f"[{self.name}] Etherscan Error: {data.get('message')} - {data.get('result')}")
+                logger.error(f"[{self.name}] Etherscan Error: {data.get('message')} - {data.get('result')}")
                 return None
 
             whale_buys = 0
@@ -118,14 +120,14 @@ class AnalystAgent:
             }
 
         except Exception as e:
-            print(f"[{self.name}] Error analyzing Etherscan data: {e}")
+            logger.error(f"[{self.name}] Error analyzing Etherscan data: {e}")
             return None
 
     def analyze_onchain_data(self, token_symbol: str):
         """
         Queries DexScreener and optionally Etherscan for Smart Money tracking.
         """
-        print(f"[{self.name}] Checking on-chain data for {token_symbol}...")
+        logger.info(f"[{self.name}] Checking on-chain data for {token_symbol}...")
         
         dex_data = self._fetch_dexscreener_data(token_symbol)
         
