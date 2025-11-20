@@ -238,8 +238,8 @@ function Settings({ isOpen, onClose }) {
 
                     <div className="settings-footer">
                         <p>
-                            <strong>🔒 Privacy:</strong> API keys are stored locally in your browser and never sent to our servers.
-                            They are only used to authenticate with the respective API providers.
+                            <strong>🔒 Privacy:</strong> API keys are stored locally in your browser and sent to our backend only for authentication with external API providers.
+                            They are never persisted or stored server-side.
                         </p>
                     </div>
                 </div>
