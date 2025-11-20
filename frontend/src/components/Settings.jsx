@@ -33,6 +33,23 @@ function Settings({ isOpen, onClose }) {
         }
     }, [isOpen]);
 
+    // Handle Escape key to close modal
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === 'Escape' && isOpen) {
+                onClose();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleKeyDown);
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isOpen, onClose]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setApiKeys(prev => ({
