@@ -34,7 +34,7 @@ AlphaDivergence is an **intelligent agentic system** that cross-references **Soc
 
 2. **Setup Environment:**
    ```bash
-   cp .env.example .env.docker
+   cp backend/.env.example .env.docker
    # Add your API keys to .env.docker
    ```
 
