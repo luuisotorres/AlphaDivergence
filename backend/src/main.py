@@ -1,10 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
 from src.agents.listener import ListenerAgent
 from src.agents.analyst import AnalystAgent
 from src.agents.judge import JudgeAgent
+import os
 
-app = FastAPI(title="AlphaDivergence API")
+app = FastAPI(
+    title="AlphaDivergence API",
+    root_path=os.getenv("ROOT_PATH", "")  # Support for running behind proxy
+)
 
 # Enable CORS for frontend
 app.add_middleware(
@@ -25,8 +30,13 @@ def read_root():
     return {"message": "AlphaDivergence Backend is running"}
 
 @app.get("/health")
-def health_check():
-    return {"status": "healthy"}
+async def health_check():
+    """Health check endpoint for Docker"""
+    return {
+        "status": "healthy",
+        "service": "alphadivergence-backend",
+        "timestamp": datetime.now().isoformat()
+    }
 
 @app.get("/analyze/{token}")
 def analyze_token(token: str):

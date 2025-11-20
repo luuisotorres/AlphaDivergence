@@ -19,6 +19,55 @@ AlphaDivergence is an **intelligent agentic system** that cross-references **Soc
 
 ---
 
+## 🐳 Quick Start with Docker (Recommended)
+
+### Prerequisites
+- Docker Desktop 4.0+
+- Docker Compose 2.0+
+
+### Installation
+1. **Clone the repo:**
+   ```bash
+   git clone https://github.com/luuisotorres/AlphaDivergence.git
+   cd AlphaDivergence
+   ```
+
+2. **Setup Environment:**
+   ```bash
+   cp backend/.env.example .env.docker
+   # Add your API keys to .env.docker
+   ```
+
+3. **Run with Docker (Development Mode):**
+   ```bash
+   docker-compose up
+   ```
+   
+   **Access the Application:**
+   - **Frontend:** [http://localhost:5173](http://localhost:5173)
+   - **Backend API:** [http://localhost:8000](http://localhost:8000)
+   - **API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
+   
+   Development mode includes hot-reloading for both frontend and backend.
+   
+   > **Note:** If you make changes to `Dockerfile` or dependencies, rebuild with:
+   > ```bash
+   > docker-compose build
+   > ```
+
+### Production Deployment
+To run in production mode (optimized build, Nginx, no hot-reload):
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+**Access the Application:**
+- **Frontend:** [http://localhost](http://localhost) (port 80)
+- **API (via Nginx proxy):** [http://localhost/api](http://localhost/api)
+- **API Docs:** [http://localhost/api/docs](http://localhost/api/docs)
+
+---
+
 ## Table of Contents
 - [How It Works](#how-it-works)
 - [The Agents](#the-agents)

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import axios from 'axios'
 import './App.css'
 
+import { API_BASE_URL } from './config'
+
 function App() {
   const [token, setToken] = useState('')
   const [data, setData] = useState(null)
@@ -15,7 +17,7 @@ function App() {
     setData(null)
 
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/analyze/${token}`)
+      const response = await axios.get(`${API_BASE_URL}/analyze/${token}`)
       setData(response.data)
     } catch (err) {
       setError("Failed to fetch analysis. Ensure backend is running.")
