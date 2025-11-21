@@ -1,6 +1,12 @@
 # AlphaDivergence
 
 <p align="left">
+  <a href="https://alphadivergence-frontend.onrender.com" target="_blank">
+    <img src="https://img.shields.io/badge/🚀_Live_Demo-Try_Now-success?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo">
+  </a>
+</p>
+
+<p align="left">
   <img src="https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/OpenAI-GPT--4o-412991?logo=openai&logoColor=white" alt="OpenAI GPT-4o">
   <img src="https://img.shields.io/badge/Google-Gemini-8E75B2?logo=google&logoColor=white" alt="Google Gemini">
