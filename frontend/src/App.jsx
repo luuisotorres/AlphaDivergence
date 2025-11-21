@@ -36,6 +36,26 @@ function App() {
 
   const handleAnalyze = async () => {
     if (!token) return
+
+    // Validate API keys when in cloud environment
+    if (isCloudEnv) {
+      try {
+        const keys = localStorage.getItem('alphadivergence_api_keys');
+        const hasKeys = keys && JSON.parse(keys);
+        const hasRequiredKey = hasKeys && (hasKeys.openaiKey || hasKeys.geminiKey);
+        
+        if (!hasRequiredKey) {
+          setError('Please configure at least one API key (OpenAI or Gemini) in Settings before analyzing.');
+          setShowBanner(true);
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking API keys:', error);
+        setError('Failed to validate API keys. Please check your configuration in Settings.');
+        return;
+      }
+    }
+
     setLoading(true)
     setError(null)
     setData(null)
