@@ -9,6 +9,7 @@
   <img src="https://img.shields.io/badge/Reddit-API-FF4500?logo=reddit&logoColor=white" alt="Reddit API">
   <img src="https://img.shields.io/badge/DexScreener-API-black?logo=chart&logoColor=white" alt="DexScreener API">
   <img src="https://img.shields.io/badge/Etherscan-API-3C3C3D?logo=ethereum&logoColor=white" alt="Etherscan API">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white" alt="Docker">
 </p>
 
 **Multi-Agent AI System for Detecting "Fake Hype" in Crypto Markets.**

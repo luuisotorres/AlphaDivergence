@@ -5,9 +5,9 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 class JudgeAgent:
-    def __init__(self):
+    def __init__(self, openai_key: str = None, gemini_key: str = None):
         self.name = "The Judge"
-        self.llm = LLMService()
+        self.llm = LLMService(openai_key=openai_key, gemini_key=gemini_key)
 
     def assess_risk(self, hype_data: dict, onchain_data: dict):
         """

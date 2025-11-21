@@ -1,26 +1,74 @@
-import { useState } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from 'react'
 import './App.css'
-
-import { API_BASE_URL } from './config'
+import Settings from './components/Settings'
+import { analyzeToken } from './services/apiClient'
+import { shouldShowSettings } from './utils/environment'
 
 function App() {
   const [token, setToken] = useState('')
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [showBanner, setShowBanner] = useState(false)
+  const [isCloudEnv, setIsCloudEnv] = useState(false)
+
+  // Check if running in cloud environment and if API keys are configured
+  useEffect(() => {
+    const cloudEnv = shouldShowSettings();
+    setIsCloudEnv(cloudEnv);
+
+    // Only check for API keys and show banner if in cloud environment
+    if (cloudEnv) {
+      try {
+        const keys = localStorage.getItem('alphadivergence_api_keys');
+        const hasKeys = keys && JSON.parse(keys);
+        const hasAnyKey = hasKeys && (hasKeys.openaiKey || hasKeys.geminiKey);
+
+        if (!hasAnyKey) {
+          setShowBanner(true);
+        }
+      } catch (error) {
+        console.error('Error checking API keys:', error);
+      }
+    }
+  }, []);
 
   const handleAnalyze = async () => {
     if (!token) return
+
+    // Validate API keys when in cloud environment
+    if (isCloudEnv) {
+      try {
+        const keys = localStorage.getItem('alphadivergence_api_keys');
+        const hasKeys = keys && JSON.parse(keys);
+        const hasRequiredKey = hasKeys && (hasKeys.openaiKey || hasKeys.geminiKey);
+        
+        if (!hasRequiredKey) {
+          setError('Please configure at least one API key (OpenAI or Gemini) in Settings before analyzing.');
+          setShowBanner(true);
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking API keys:', error);
+        setError('Failed to validate API keys. Please check your configuration in Settings.');
+        return;
+      }
+    }
+
     setLoading(true)
     setError(null)
     setData(null)
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/analyze/${token}`)
-      setData(response.data)
+      const response = await analyzeToken(token)
+      setData(response)
+      setShowBanner(false) // Hide banner after successful analysis
     } catch (err) {
-      setError("Failed to fetch analysis. Ensure backend is running.")
+      const errorMsg = isCloudEnv
+        ? "Failed to fetch analysis. Ensure backend is running and API keys are configured."
+        : "Failed to fetch analysis. Ensure backend is running.";
+      setError(errorMsg)
       console.error(err)
     } finally {
       setLoading(false)
@@ -29,8 +77,24 @@ function App() {
 
   return (
     <div className="container">
-      <h1>AlphaDivergence</h1>
-      <p className="subtitle">Multi-Agent Fake Hype Detector</p>
+      <div className="header">
+        <div>
+          <h1>AlphaDivergence</h1>
+          <p className="subtitle">Multi-Agent Fake Hype Detector</p>
+        </div>
+        {isCloudEnv && (
+          <button className="settings-btn" onClick={() => setSettingsOpen(true)} title="Configure API Keys">
+            ⚙️
+          </button>
+        )}
+      </div>
+
+      {isCloudEnv && showBanner && (
+        <div className="config-banner">
+          <span>⚠️ Configure your API keys to unlock full functionality</span>
+          <button onClick={() => setSettingsOpen(true)}>Configure Now</button>
+        </div>
+      )}
 
       <div className="search-box">
         <input
@@ -38,6 +102,7 @@ function App() {
           placeholder="Enter Token Symbol (e.g. PEPE)"
           value={token}
           onChange={(e) => setToken(e.target.value.toUpperCase())}
+          onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
         />
         <button onClick={handleAnalyze} disabled={loading}>
           {loading ? "Analyzing..." : "Analyze"}
@@ -80,6 +145,8 @@ function App() {
           </div>
         </div>
       )}
+
+      {isCloudEnv && <Settings isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />}
     </div>
   )
 }

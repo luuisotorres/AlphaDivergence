@@ -13,6 +13,76 @@
   gap: 2rem;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+.settings-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 1rem;
+  font-size: 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.settings-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+  border-color: #646cff;
+}
+
+.config-banner {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 152, 0, 0.2) 100%);
+  border: 1px solid rgba(255, 193, 7, 0.4);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 800px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.config-banner span {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.config-banner button {
+  background: #ffc107;
+  color: #000;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.config-banner button:hover {
+  background: #ffb300;
+  border-color: transparent;
+}
+
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;

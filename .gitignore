@@ -216,3 +216,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Frontend / Node.js
+node_modules/
+frontend/node_modules/
+frontend/dist/

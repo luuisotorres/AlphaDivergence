@@ -8,9 +8,10 @@ load_dotenv()
 logger = get_logger(__name__)
 
 class AnalystAgent:
-    def __init__(self):
+    def __init__(self, etherscan_api_key: str = None):
         self.name = "The Analyst"
-        self.etherscan_api_key = os.getenv("ETHERSCAN_API_KEY")
+        # Priority: Passed key → Environment variable
+        self.etherscan_api_key = etherscan_api_key or os.getenv("ETHERSCAN_API_KEY")
 
     def _fetch_dexscreener_data(self, token_symbol: str):
         """Fetches real-time data from DexScreener."""
