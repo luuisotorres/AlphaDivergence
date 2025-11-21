@@ -41,9 +41,12 @@ function App() {
     if (isCloudEnv) {
       try {
         const keys = localStorage.getItem('alphadivergence_api_keys');
-        const hasKeys = keys && JSON.parse(keys);
-        const hasRequiredKey = hasKeys && (hasKeys.openaiKey || hasKeys.geminiKey);
-        
+        const parsedKeys = keys ? JSON.parse(keys) : null;
+        const hasRequiredKey = parsedKeys && (
+          (parsedKeys.openaiKey && parsedKeys.openaiKey.trim() !== '') ||
+          (parsedKeys.geminiKey && parsedKeys.geminiKey.trim() !== '')
+        );
+
         if (!hasRequiredKey) {
           setError('Please configure at least one API key (OpenAI or Gemini) in Settings before analyzing.');
           setShowBanner(true);
